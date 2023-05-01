@@ -1,14 +1,16 @@
-import { ChronoField, LocalDate } from '@js-joda/core';
-import { Animated, View } from 'react-native';
+import { LocalDate } from '@js-joda/core';
+import { Animated, StyleSheet, Text, View } from 'react-native';
 import { useEffect, useRef } from 'react';
 import { proxy, useSnapshot } from 'valtio';
 import DayType from '../../constants/DayType';
 import DateTimeUtils from '../../utils/DateTimeUtils';
 import Week from './Week';
+import MonthType from '../../constants/MonthType';
+import { Colors } from '../../styles';
 import FlatList = Animated.FlatList;
 
 type PropsType = {
-  month: number;
+  month: MonthType;
 };
 
 type StateType = {
@@ -21,7 +23,7 @@ type StateType = {
 function Month(props: PropsType) {
   const state = useRef(
     proxy<StateType>({
-      localDate: new DateTimeUtils(LocalDate.of(2023, props.month, 1)),
+      localDate: new DateTimeUtils(LocalDate.of(2023, props.month.value, 1)),
       firstDay: DayType.DEFAULT,
       lastDay: DayType.DEFAULT,
       weeks: null,
@@ -46,14 +48,14 @@ function Month(props: PropsType) {
   };
 
   const getFrontBlankNumber = (): number => {
-    if (state.firstDay.value === 7) {
+    if (state.firstDay.value === DayType.SUNDAY.value) {
       return 0;
     }
     return state.firstDay.value;
   };
 
   const getLastBlankNumber = (): number => {
-    if (state.lastDay.value === 7) {
+    if (state.lastDay.value === DayType.SUNDAY.value) {
       return 6;
     }
     return 6 - state.lastDay.value;
@@ -82,7 +84,26 @@ function Month(props: PropsType) {
     state.weeks = monthArr;
   };
 
-  const renderWeek = ({ item, index }) => {
+  const renderWeekTitle = () => {
+    return (
+      <View>
+        <View style={styles.monthTitleLayout}>
+          <Text style={styles.monthTitle}>{props.month.title}</Text>
+        </View>
+        <View style={styles.weekTitleContainer}>
+          {DayType.values().map((day, index) => {
+            return (
+              <View key={index}>
+                <Text style={styles.weekTitle}>{day.title}</Text>
+              </View>
+            );
+          })}
+        </View>
+      </View>
+    );
+  };
+
+  const renderWeek = ({ item, index }: { item: (LocalDate | null)[]; index: number }) => {
     return (
       <View key={index}>
         <Week week={item} />
@@ -90,7 +111,32 @@ function Month(props: PropsType) {
     );
   };
 
-  return <FlatList data={state.weeks} renderItem={renderWeek} />;
+  return (
+    <View>
+      <FlatList data={state.weeks} renderItem={renderWeek} ListHeaderComponent={renderWeekTitle} />
+    </View>
+  );
 }
+
+const styles = StyleSheet.create({
+  monthTitleLayout: {
+    alignItems: 'center',
+    paddingVertical: 10,
+  },
+  monthTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  weekTitleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-evenly',
+    backgroundColor: Colors.white.s100,
+    paddingVertical: 15,
+  },
+  weekTitle: {
+    fontSize: 16,
+  },
+});
 
 export default Month;

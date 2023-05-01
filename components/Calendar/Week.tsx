@@ -8,7 +8,7 @@ type PropsTYpe = {
 };
 
 function Week(props: PropsTYpe) {
-  const renderItem = ({ item, index }) => {
+  const renderItem = ({ item, index }: { item: LocalDate; index: number }) => {
     return (
       <View key={index}>
         <Day day={item} />
@@ -29,10 +29,7 @@ function Week(props: PropsTYpe) {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'blue',
-    justifyContent: 'space-between',
-    paddingLeft: 10,
-    paddingRight: 10,
+    justifyContent: 'center',
   },
 });
 

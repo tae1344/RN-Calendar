@@ -1,25 +1,50 @@
-import { useContext, useEffect } from 'react';
-import { View } from 'react-native';
-import CalendarContext from '../../cotext/calendar/CalendarContext';
-import { ChronoField, LocalDate } from '@js-joda/core';
+import { Animated, StyleSheet, Text, View } from 'react-native';
 import Month from './Month';
+import { LocalDate } from '@js-joda/core';
+import { useEffect, useRef } from 'react';
+import { proxy } from 'valtio';
+import FlatList = Animated.FlatList;
+import MonthType from '../../constants/MonthType';
 
-type PropsType = {};
+type StateType = {
+  thisMonth: number;
+};
+
+type PropsType = {
+  monthCount: number;
+};
 
 function MonthList(props: PropsType) {
-  const { startDate, setStartDate, endDate, setEndDate } = useContext(CalendarContext);
+  const calendarRef = useRef<FlatList>(null);
+  const state = useRef(
+    proxy<StateType>({
+      thisMonth: LocalDate.now().monthValue(),
+    }),
+  ).current;
 
-  useEffect(() => {
-    console.log('calendar', startDate, endDate);
-    const date = LocalDate.of(2023, 3, 19);
-    console.log('>>>>>>>>>>>> ', date.get(ChronoField.DAY_OF_MONTH));
-    console.log('dayOfWeek ', date.dayOfWeek(), date.dayOfWeek().value());
-  }, []);
+  const onFailToScroll = info => {
+    const wait = new Promise(resolve => setTimeout(resolve, 500));
+    wait.then(() => {
+      calendarRef.current?.scrollToIndex({ index: info.index, animated: false });
+    });
+  };
+
+  const renderMonth = ({ item, index }: { item: MonthType; index: number }) => {
+    return (
+      <View key={index}>
+        <Month month={item} />
+      </View>
+    );
+  };
 
   return (
-    <View>
-      <Month month={3} />
-    </View>
+    <FlatList
+      ref={calendarRef}
+      data={MonthType.values()}
+      initialScrollIndex={state.thisMonth - 1}
+      renderItem={renderMonth}
+      onScrollToIndexFailed={onFailToScroll}
+    />
   );
 }
 
