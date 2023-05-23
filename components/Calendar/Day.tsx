@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { Dimensions, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { LocalDate } from '@js-joda/core';
-import CalendarContext from '../../cotext/calendar/CalendarContext';
+import CalendarContext from '../../context/calendar/CalendarContext';
 import { Colors } from '../../styles';
 
 type PropsType = {

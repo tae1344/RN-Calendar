@@ -1,6 +1,6 @@
 import { LocalDate } from '@js-joda/core';
 import { Animated, StyleSheet, Text, View } from 'react-native';
-import { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { proxy, useSnapshot } from 'valtio';
 import DayType from '../../constants/DayType';
 import DateTimeUtils from '../../utils/DateTimeUtils';
@@ -10,7 +10,7 @@ import { Colors } from '../../styles';
 import FlatList = Animated.FlatList;
 
 type PropsType = {
-  month: MonthType;
+  month: LocalDate;
 };
 
 type StateType = {
@@ -23,7 +23,7 @@ type StateType = {
 function Month(props: PropsType) {
   const state = useRef(
     proxy<StateType>({
-      localDate: new DateTimeUtils(LocalDate.of(2023, props.month.value, 1)),
+      localDate: new DateTimeUtils(props.month),
       firstDay: DayType.DEFAULT,
       lastDay: DayType.DEFAULT,
       weeks: null,
@@ -88,13 +88,13 @@ function Month(props: PropsType) {
     return (
       <View>
         <View style={styles.monthTitleLayout}>
-          <Text style={styles.monthTitle}>{props.month.title}</Text>
+          <Text style={styles.monthTitle}>{MonthType.findOne(props.month.monthValue()).title}</Text>
         </View>
         <View style={styles.weekTitleContainer}>
           {DayType.values().map((day, index) => {
             return (
               <View key={index}>
-                <Text style={styles.weekTitle}>{day.title}</Text>
+                <Text style={styles.weekTitle}>{day.w}</Text>
               </View>
             );
           })}

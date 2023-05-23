@@ -1,7 +1,8 @@
 import React from 'react';
-import { SafeAreaView, StyleSheet, useColorScheme } from 'react-native';
+import { SafeAreaView, useColorScheme } from 'react-native';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 import Calendar from './components/Calendar/Calendar';
+import CalendarProvider from './context/calendar/CalendarProvider';
 
 function App(): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
@@ -12,7 +13,9 @@ function App(): JSX.Element {
 
   return (
     <SafeAreaView style={backgroundStyle}>
-      <Calendar />
+      <CalendarProvider>
+        <Calendar />
+      </CalendarProvider>
     </SafeAreaView>
   );
 }

@@ -22,6 +22,16 @@ export default class MonthType {
     this.month = month;
   }
 
+  public static findOne(value: number): MonthType {
+    const month = MonthType.values().find(month => month.value === value);
+
+    if (month === undefined) {
+      return MonthType.values()[value + 1];
+    }
+
+    return month;
+  }
+
   public static values() {
     return [
       MonthType.JANUARY,

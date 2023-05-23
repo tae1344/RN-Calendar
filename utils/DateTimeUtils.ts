@@ -1,14 +1,15 @@
 import { LocalDate } from '@js-joda/core';
+import DayType from '../constants/DayType';
 
 export default class DateTimeUtils {
   private localDate: LocalDate;
-  private static sDate: LocalDate;
-  private static eDate: LocalDate;
+  private sDate: LocalDate;
+  private eDate: LocalDate;
 
   constructor(date: LocalDate = LocalDate.now()) {
     this.localDate = date;
-    DateTimeUtils.sDate = this.localDate.withDayOfMonth(1);
-    DateTimeUtils.eDate = this.localDate.withDayOfMonth(this.localDate.lengthOfMonth());
+    this.sDate = this.localDate.withDayOfMonth(1);
+    this.eDate = this.localDate.withDayOfMonth(this.localDate.lengthOfMonth());
   }
 
   public date() {
@@ -20,24 +21,24 @@ export default class DateTimeUtils {
   }
 
   public getFirstDayOfMonth() {
-    return DateTimeUtils.sDate;
+    return this.sDate;
   }
 
   public getLastDayOfMonth() {
-    return DateTimeUtils.eDate;
+    return this.eDate;
   }
 
   public getFrontBlanksOfMonth() {
-    const valueOfFirstDay = DateTimeUtils.sDate.dayOfWeek().value();
-    if (valueOfFirstDay === 7) {
+    const valueOfFirstDay = this.sDate.dayOfWeek().value();
+    if (valueOfFirstDay === DayType.SUNDAY.value) {
       return 0;
     }
     return valueOfFirstDay;
   }
 
   public getLastBlanks() {
-    const valueOfLastDay = DateTimeUtils.eDate.dayOfWeek().value();
-    if (valueOfLastDay === 7) {
+    const valueOfLastDay = this.eDate.dayOfWeek().value();
+    if (valueOfLastDay === DayType.SUNDAY.value) {
       return 6;
     }
     return 6 - valueOfLastDay;

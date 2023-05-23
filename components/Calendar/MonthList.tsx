@@ -1,26 +1,16 @@
-import { Animated, StyleSheet, Text, View } from 'react-native';
+import { Animated, View } from 'react-native';
 import Month from './Month';
 import { LocalDate } from '@js-joda/core';
-import { useEffect, useRef } from 'react';
-import { proxy } from 'valtio';
+import React, { useRef } from 'react';
 import FlatList = Animated.FlatList;
-import MonthType from '../../constants/MonthType';
-
-type StateType = {
-  thisMonth: number;
-};
 
 type PropsType = {
   monthCount: number;
+  months: LocalDate[];
 };
 
 function MonthList(props: PropsType) {
   const calendarRef = useRef<FlatList>(null);
-  const state = useRef(
-    proxy<StateType>({
-      thisMonth: LocalDate.now().monthValue(),
-    }),
-  ).current;
 
   const onFailToScroll = info => {
     const wait = new Promise(resolve => setTimeout(resolve, 500));
@@ -29,7 +19,7 @@ function MonthList(props: PropsType) {
     });
   };
 
-  const renderMonth = ({ item, index }: { item: MonthType; index: number }) => {
+  const renderMonth = ({ item, index }: { item: LocalDate; index: number }) => {
     return (
       <View key={index}>
         <Month month={item} />
@@ -37,15 +27,15 @@ function MonthList(props: PropsType) {
     );
   };
 
-  return (
+  return props.months.length > 0 ? (
     <FlatList
       ref={calendarRef}
-      data={MonthType.values()}
-      initialScrollIndex={state.thisMonth - 1}
+      data={props.months}
+      // initialScrollIndex={props.months.length - props.monthCount - 1}
       renderItem={renderMonth}
-      onScrollToIndexFailed={onFailToScroll}
+      // onScrollToIndexFailed={onFailToScroll}
     />
-  );
+  ) : null;
 }
 
 export default MonthList;
