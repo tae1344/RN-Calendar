@@ -1,11 +1,10 @@
 import { Animated, View } from 'react-native';
-import Month from './Month';
+import Month from '../Month/Month';
 import { LocalDate } from '@js-joda/core';
 import React, { useRef } from 'react';
 import FlatList = Animated.FlatList;
 
 type PropsType = {
-  monthCount: number;
   months: LocalDate[];
 };
 
@@ -27,15 +26,7 @@ function MonthList(props: PropsType) {
     );
   };
 
-  return props.months.length > 0 ? (
-    <FlatList
-      ref={calendarRef}
-      data={props.months}
-      // initialScrollIndex={props.months.length - props.monthCount - 1}
-      renderItem={renderMonth}
-      // onScrollToIndexFailed={onFailToScroll}
-    />
-  ) : null;
+  return props.months.length > 0 ? <FlatList ref={calendarRef} data={props.months} renderItem={renderMonth} /> : null;
 }
 
 export default MonthList;

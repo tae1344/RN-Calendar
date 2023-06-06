@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, View, FlatList } from 'react-native';
-import Day from './Day';
+import Day from '../Day/Day';
 import { LocalDate } from '@js-joda/core';
 
 type PropsTYpe = {

@@ -4,7 +4,7 @@ import React, { useEffect, useRef } from 'react';
 import { proxy, useSnapshot } from 'valtio';
 import DayType from '../../constants/DayType';
 import DateTimeUtils from '../../utils/DateTimeUtils';
-import Week from './Week';
+import Week from '../Week/Week';
 import MonthType from '../../constants/MonthType';
 import { Colors } from '../../styles';
 import FlatList = Animated.FlatList;

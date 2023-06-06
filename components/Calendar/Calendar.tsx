@@ -1,8 +1,9 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useContext, useEffect, useRef } from 'react';
 import { SafeAreaView } from 'react-native';
-import MonthList from './MonthList';
+import MonthList from '../MonthList/MonthList';
 import { proxy, useSnapshot } from 'valtio';
 import { LocalDate } from '@js-joda/core';
+import CalendarContext from '../../context/calendar/CalendarContext';
 
 type PropsType = {
   monthCount: number;
@@ -14,6 +15,14 @@ type StateType = {
 };
 
 function Calendar(props: PropsType) {
+  const { startDate, endDate, onPressDay, monthCount = 2 } = useContext(CalendarContext);
+
+  useEffect(() => {
+    if (startDate !== undefined && endDate !== undefined) {
+      onPressDay && onPressDay({ startDate: startDate, endDate: endDate });
+    }
+  }, [startDate, endDate]);
+
   const state = useRef(
     proxy<StateType>({
       today: LocalDate.now(),
@@ -25,13 +34,13 @@ function Calendar(props: PropsType) {
 
   useEffect(() => {
     state.months = retrieveMonths();
-  }, [props.monthCount]);
+  }, [monthCount]);
 
   const retrieveMonths = (): LocalDate[] => {
     let dates: LocalDate[] = [];
 
     // 현재 월 기준 이전
-    for (let i = 1; i <= props.monthCount; i++) {
+    for (let i = 1; i <= monthCount; i++) {
       dates = [state.today.minusMonths(i).withDayOfMonth(1), ...dates];
     }
 
@@ -39,7 +48,7 @@ function Calendar(props: PropsType) {
     dates = [...dates, state.today.withDayOfMonth(1)];
 
     // 현재 월 기준 이후
-    for (let i = 1; i <= props.monthCount; i++) {
+    for (let i = 1; i <= monthCount; i++) {
       dates = [...dates, state.today.plusMonths(i).withDayOfMonth(1)];
     }
 
@@ -48,7 +57,7 @@ function Calendar(props: PropsType) {
 
   return (
     <SafeAreaView>
-      <MonthList months={state.months} monthCount={props.monthCount} />
+      <MonthList months={state.months} />
     </SafeAreaView>
   );
 }

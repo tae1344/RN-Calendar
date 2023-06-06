@@ -1,8 +1,13 @@
 import React, { useContext } from 'react';
-import { Dimensions, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { Dimensions, StyleSheet, Text, TouchableOpacity, ViewStyle } from 'react-native';
 import { LocalDate } from '@js-joda/core';
 import CalendarContext from '../../context/calendar/CalendarContext';
 import { Colors } from '../../styles';
+
+type StyleType = {
+  layout?: (color: string) => ViewStyle;
+  circle?: (color: string) => ViewStyle;
+};
 
 type PropsType = {
   day: LocalDate | null;
@@ -11,9 +16,9 @@ type PropsType = {
 const WIDTH = Dimensions.get('screen').width - 32;
 
 function Day(props: PropsType) {
-  const { startDate, setStartDate, endDate, setEndDate } = useContext(CalendarContext);
+  const { startDate, setStartDate, endDate, setEndDate, activeColor } = useContext(CalendarContext);
 
-  const onPressDay = () => {
+  const onPress = () => {
     processDate();
   };
 
@@ -49,17 +54,17 @@ function Day(props: PropsType) {
 
     if (isStartDate()) {
       if (endDate === null) {
-        return startDayStyle.circle;
+        return startDayStyle.circle(activeColor);
       }
-      return startDayStyle.layout;
+      return startDayStyle.layout(activeColor);
     }
 
     if (isEndDate()) {
-      return endDayStyle.layout;
+      return endDayStyle.layout(activeColor);
     }
 
     if (isWithinPeriod()) {
-      return containedDay.layout;
+      return containedDay.layout(activeColor);
     }
 
     return defaultDayStyle.layout;
@@ -68,24 +73,28 @@ function Day(props: PropsType) {
   const processDate = () => {
     if (startDate === null && endDate === null) {
       setStartDate(props.day);
+      return;
     }
 
     if (startDate !== null && endDate !== null) {
       setStartDate(props.day);
       setEndDate(null);
+      return;
     }
 
     if (props.day !== null && startDate !== null && endDate === null) {
       if (startDate.isAfter(props.day) || startDate.isEqual(props.day)) {
         setStartDate(props.day);
+        return;
       } else {
         setEndDate(props.day);
+        return;
       }
     }
   };
 
   return (
-    <TouchableOpacity style={setDayStyle()} onPress={onPressDay}>
+    <TouchableOpacity style={setDayStyle()} onPress={onPress}>
       <Text style={textStyle.dayText(isActive())}>{props.day === null ? null : props.day.dayOfMonth()}</Text>
     </TouchableOpacity>
   );
@@ -101,36 +110,36 @@ const defaultDayStyle = StyleSheet.create({
   },
 });
 
-const containedDay = StyleSheet.create({
-  layout: {
+const containedDay = StyleSheet.create<StyleType | any>({
+  layout: (color = Colors.gray.s200) => ({
     ...defaultDayStyle.layout,
-    backgroundColor: Colors.gray.s200,
-  },
+    backgroundColor: color,
+  }),
 });
 
-const startDayStyle = StyleSheet.create({
-  layout: {
+const startDayStyle = StyleSheet.create<StyleType | any>({
+  layout: (color = Colors.gray.s200) => ({
     ...defaultDayStyle.layout,
-    backgroundColor: Colors.gray.s200,
+    backgroundColor: color,
     borderTopLeftRadius: 99,
     borderBottomLeftRadius: 99,
     borderWidth: 0,
-  },
-  circle: {
+  }),
+  circle: (color = Colors.gray.s200): ViewStyle => ({
     ...defaultDayStyle.layout,
-    backgroundColor: Colors.gray.s200,
+    backgroundColor: color,
     borderRadius: 999,
-  },
+  }),
 });
 
-const endDayStyle = StyleSheet.create({
-  layout: {
+const endDayStyle = StyleSheet.create<StyleType | any>({
+  layout: (color = Colors.gray.s200): ViewStyle => ({
     ...defaultDayStyle.layout,
-    backgroundColor: Colors.gray.s200,
+    backgroundColor: color,
     borderTopRightRadius: 99,
     borderBottomRightRadius: 99,
     borderWidth: 0,
-  },
+  }),
 });
 
 const textStyle = StyleSheet.create<any>({
