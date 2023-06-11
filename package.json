@@ -2,6 +2,10 @@
   "name": "CalenderProject",
   "version": "1.0.0",
   "private": true,
+  "description": "This is RN Calendar Component Project",
+  "keywords": ["Calendar", "react-native-calendar"],
+  "license": "MIT",
+  "author": {"name": "taeya"},
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",
